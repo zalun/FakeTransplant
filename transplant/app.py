@@ -1,6 +1,7 @@
 from flask import Flask
 from transplant.views import app_blueprint
 
+
 def create_app():
     app = Flask(__name__)
 
