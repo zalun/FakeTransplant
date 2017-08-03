@@ -42,11 +42,11 @@ def test_autoland_response(client, clean_cache):
     assert response.status_code == 200
     assert response.json == {'request_id': 1}
     assert cache.get('transplant-index') == 1
-    assert cache.get('transplant-keys') == '["transplant-1"]'
+    assert cache.get('transplant-keys') == ["transplant-1"]
 
 
 def test_pingback(client, clean_cache):
-    cache.set('transplant-keys', '["transplant-1", "transplant-2"]')
+    cache.set('transplant-keys', ["transplant-1", "transplant-2"])
     data1 = {
         'tree': 'tree1',
         'rev': 'rev1',
@@ -61,8 +61,8 @@ def test_pingback(client, clean_cache):
         'pingback_url': 'http://landoapi.test/update/2',
         'request_id': 2
     }
-    cache.set('transplant-1', json.dumps(data1))
-    cache.set('transplant-2', json.dumps(data2))
+    cache.set('transplant-1', data1)
+    cache.set('transplant-2', data2)
     with requests_mock.mock() as mocker:
         mocker.post(
             'http://landoapi.test/update/1',
@@ -86,7 +86,7 @@ def test_pingback(client, clean_cache):
     data1.update(update_data)
     data2.update(update_data)
     # Is updated data removed from cache?
-    assert cache.get('transplant-keys') == '[]'
+    assert cache.get('transplant-keys') == []
     assert cache.get('transplant-1') == None
     assert cache.get('transplant-2') == None
     # Is pingback called?

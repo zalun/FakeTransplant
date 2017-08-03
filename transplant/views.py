@@ -34,12 +34,11 @@ def autoland():
     index = increment()
     keys = cache.get('transplant-keys')
     if not keys:
-        keys = '[]'
+        keys = []
 
-    keys = json.loads(keys)
     key = 'transplant-%d' % index
     keys.append(key)
-    cache.set('transplant-keys', json.dumps(keys))
+    cache.set('transplant-keys', keys)
 
     data = {
         'tree': request.form.get('tree'),
@@ -48,7 +47,9 @@ def autoland():
         'pingback_url': request.form.get('pingback_url'),
         'request_id': index
     }
-    cache.set(key, json.dumps(data))
+    cache.set(key, data)
+    print(key)
+    print(data)
 
     return jsonify({'request_id': index})
 
@@ -56,10 +57,13 @@ def autoland():
 @app_blueprint.route('/send_pingback')
 def send_pingback():
     """Retrieve all data from cache, send send pingbacks and then remove."""
-    unsent_keys = json.loads(cache.get('transplant-keys'))
+    unsent_keys = cache.get('transplant-keys')
+    if not unsent_keys:
+        return 'No pingbacks to send'
+
     keys = unsent_keys[:]
     for key in unsent_keys:
-        land = json.loads(cache.get(key))
+        land = cache.get(key)
         land.update({
             'result': '',
             'trysyntax': '',
@@ -74,6 +78,6 @@ def send_pingback():
         )
         cache.set(key, None)
         keys.remove(key)
-        cache.set('transplant-keys', json.dumps(keys))
+        cache.set('transplant-keys', keys)
 
     return '%s pingbacks requested' % len(unsent_keys)
