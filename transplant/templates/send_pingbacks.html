@@ -1,0 +1,11 @@
+<html>
+  <body>
+    <p>{{ requests_number }} pingbacks requested</p>
+    <dl>
+    {% for pingback, response in responses.items() %}
+      <dt>{{ pingback }}</dt>
+      <dd>{{ response }}</dd>
+    {% endfor %}
+    </dl>
+  </body>
+</html>

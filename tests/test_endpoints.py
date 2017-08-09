@@ -3,6 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import json
+import os
 import pytest
 import requests_mock
 from transplant.app import create_app
@@ -93,7 +94,13 @@ def test_pingback(client, clean_cache):
     assert mocker.called
     assert mocker.call_count == 2
     history = mocker.request_history
-    assert history[0].url == 'http://landoapi.test/update/1'
-    assert history[0].json() == data1
-    assert history[1].url == 'http://landoapi.test/update/2'
-    assert history[1].json() == data2
+    h = history[0]
+    assert h.url == 'http://landoapi.test/update/1'
+    assert h.json() == data1
+    assert h.headers.get('API-Key') == os.getenv('TRANSPLANT_API_KEY')
+    assert h.headers.get('content-type') == 'application/json'
+    h = history[1]
+    assert h.url == 'http://landoapi.test/update/2'
+    assert h.json() == data2
+    assert h.headers.get('API-Key') == os.getenv('TRANSPLANT_API_KEY')
+    assert h.headers.get('content-type') == 'application/json'

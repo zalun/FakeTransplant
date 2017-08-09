@@ -6,7 +6,7 @@ import json
 import os
 import requests
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, render_template, request
 from werkzeug.contrib.cache import SimpleCache
 
 app_blueprint = Blueprint('app', __name__)
@@ -48,8 +48,6 @@ def autoland():
         'request_id': index
     }
     cache.set(key, data)
-    print(key)
-    print(data)
 
     return jsonify({'request_id': index})
 
@@ -62,22 +60,31 @@ def send_pingback():
         return 'No pingbacks to send'
 
     keys = unsent_keys[:]
+    responses = {}
     for key in unsent_keys:
         land = cache.get(key)
         land.update({
             'result': '',
             'trysyntax': '',
             'error_msg': '',
-            'landed': True
+            'landed': True,
         })
-        requests.request(
+        response = requests.request(
             method='POST',
             url=land['pingback_url'],
             data=json.dumps(land),
-            headers={'API-Key': os.getenv('TRANSPLANT_API_KEY')}
+            headers={
+                'API-Key': os.getenv('TRANSPLANT_API_KEY'),
+                'content-type': 'application/json'
+            },
         )
+        responses[key] = response
+
         cache.set(key, None)
         keys.remove(key)
         cache.set('transplant-keys', keys)
 
-    return '%s pingbacks requested' % len(unsent_keys)
+    return render_template('send_pingbacks.html',
+                           requests_number=len(unsent_keys),
+                           responses=responses)
+
