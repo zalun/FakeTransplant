@@ -119,13 +119,17 @@ def test_pingback_no_server(client, clean_cache):
     }
     cache.set('transplant-1', data1)
     response = client.get('/send_pingback')
+    print(response.data)
     compare_string = (
         b'<html>\n'
         b'  <body>\n'
         b'    <p>Pingbacks requested: 1</p>\n'
         b'    <dl>\n    \n'
         b'      <dt>http://landoapi.nonexisting/update/1</dt>\n'
-        b'      <dd>HTTPConnectionPool(host=&#39;landoapi.nonexisting&#39;, port=80):'
+        b'      <dd>failed</dd>\n    \n'
+        b'    </dl>\n'
+        b'  </body>\n'
+        b'</html>'
     )
     assert response.data[:len(compare_string)] == compare_string
     assert response.status_code == 200

@@ -6,6 +6,7 @@ import json
 import os
 import requests
 
+from requests.exceptions import ConnectionError
 from flask import Blueprint, jsonify, render_template, request
 from werkzeug.contrib.cache import SimpleCache
 
@@ -80,8 +81,8 @@ def send_pingback():
                 },
             )
             responses[land['pingback_url']] = response.status_code
-        except Exception as e:
-            responses[land['pingback_url']] = e
+        except ConnectionError:
+            responses[land['pingback_url']] = 'failed'
 
         cache.set(key, None)
         keys.remove(key)
