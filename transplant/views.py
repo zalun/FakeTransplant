@@ -69,16 +69,19 @@ def send_pingback():
             'error_msg': '',
             'landed': True,
         })
-        response = requests.request(
-            method='POST',
-            url=land['pingback_url'],
-            data=json.dumps(land),
-            headers={
-                'API-Key': os.getenv('TRANSPLANT_API_KEY'),
-                'content-type': 'application/json'
-            },
-        )
-        responses[key] = response
+        try:
+            response = requests.request(
+                method='POST',
+                url=land['pingback_url'],
+                data=json.dumps(land),
+                headers={
+                    'API-Key': os.getenv('TRANSPLANT_API_KEY'),
+                    'content-type': 'application/json'
+                },
+            )
+            responses[land['pingback_url']] = response.status_code
+        except Exception as e:
+            responses[land['pingback_url']] = e
 
         cache.set(key, None)
         keys.remove(key)
@@ -87,4 +90,3 @@ def send_pingback():
     return render_template('send_pingbacks.html',
                            requests_number=len(unsent_keys),
                            responses=responses)
-

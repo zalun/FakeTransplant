@@ -75,7 +75,9 @@ def test_pingback(client, clean_cache):
             json={},
             status_code=202
         )
-        client.get('/send_pingback')
+        response = client.get('/send_pingback')
+
+    assert response.status_code == 200
 
     # Data provided for pingback is extended with this object
     update_data = {
@@ -104,3 +106,26 @@ def test_pingback(client, clean_cache):
     assert h.json() == data2
     assert h.headers.get('API-Key') == os.getenv('TRANSPLANT_API_KEY')
     assert h.headers.get('content-type') == 'application/json'
+
+
+def test_pingback_no_server(client, clean_cache):
+    cache.set('transplant-keys', ["transplant-1"])
+    data1 = {
+        'tree': 'tree1',
+        'rev': 'rev1',
+        'destination': 'destination1',
+        'pingback_url': 'http://landoapi.nonexisting/update/1',
+        'request_id': 1
+    }
+    cache.set('transplant-1', data1)
+    response = client.get('/send_pingback')
+    compare_string = (
+        b'<html>\n'
+        b'  <body>\n'
+        b'    <p>Pingbacks requested: 1</p>\n'
+        b'    <dl>\n    \n'
+        b'      <dt>http://landoapi.nonexisting/update/1</dt>\n'
+        b'      <dd>HTTPConnectionPool(host=&#39;landoapi.nonexisting&#39;, port=80):'
+    )
+    assert response.data[:len(compare_string)] == compare_string
+    assert response.status_code == 200
