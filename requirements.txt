@@ -4,9 +4,9 @@ Flask==0.12.2 \
 Jinja2==2.9.6 \
     --hash=sha256:2231bace0dfd8d2bf1e5d7e41239c06c9e0ded46e70cc1094a0aa64b0afeb054 \
     --hash=sha256:ddaa01a212cd6d641401cb01b605f4a4d9f37bfc93043d7f760ec70fb99ff9ff
-Werkzeug==0.12.2 \
-    --hash=sha256:e8549c143af3ce6559699a01e26fa4174f4c591dbee0a499f3cd4c3781cdec3d \
-    --hash=sha256:903a7b87b74635244548b30d30db4c8947fe64c5198f58899ddcd3a13c23bb26
+Werkzeug==0.15.3 \
+    --hash=sha256:97660b282aa7e29f94f3fe378e5c7162d7ab9d601a8dbb1cbb2ffc8f0e54607d \
+    --hash=sha256:cfd1281b1748288e59762c0e174d64d8bcb2b70e7c57bc4a1203c8825af24ac3
 itsdangerous==0.24 \
     --hash=sha256:cbb3fcf8d3e33df861709ecaf89d9e6629cff0a217bc2848f1b41cd30d360519
 click==6.7 \
